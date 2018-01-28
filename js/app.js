@@ -1,6 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
+var createIconSet = [];
 var icons = [
     '<i class="fa fa-diamond"></i>',
     '<i class="fa fa-paper-plane-o"></i>',
@@ -11,7 +12,10 @@ var icons = [
     '<i class="fa fa-bicycle"></i>',
     '<i class="fa fa-bomb"></i>'     
 ];
-
+for (let i = 0; i < icons.length; i++) {
+    createIconSet.push(icons[i]);
+    createIconSet.push(icons[i]);
+}
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -19,31 +23,27 @@ var icons = [
  *   - add each card's HTML to the page
  *   - shuffle function from http://stackoverflow.com/a/2450976
  */
-function shuffle(icons) {
-    var currentIndex = icons.length, temporaryValue, randomIndex;
+function shuffle(arr) {
+    var currentIndex = arr.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-        temporaryValue = icons[currentIndex];
-        icons[currentIndex] = icons[randomIndex];
-        icons[randomIndex] = temporaryValue;
+        temporaryValue = createIconSet[currentIndex];
+        arr[currentIndex] = arr[randomIndex];
+        arr[randomIndex] = temporaryValue;
     }
-    console.log(icons);
-    
-    return icons;
+    return arr;
 }
 
 function createCards() {
     var cards = document.getElementById('cards');
-    shuffle(icons);
-    for (var i = 0; i < icons.length; i++) {
-        
+    shuffle(createIconSet);
+    for (var i = 0; i < createIconSet.length; i++) {  
         var list = document.createElement('li');
         list.classList.add('card');
-        console.log(list);
+        list.innerHTML = shuffle(createIconSet)[i];
         cards.appendChild(list);
-
     }
 }
 
@@ -60,15 +60,20 @@ function createCards() {
 function gameWon() {
     var cards = document.getElementsByClassName('card');
     var matchingCards = new Array();
-
+    var cardsMatch = false;
     for (var i = 0; i < cards.length; i++) {
         cards[i].addEventListener('click', function() {
             matchingCards.push(this.children[0].className);
-            console.log(matchingCards);
+            this.classList.add('open', 'show');
             if (matchingCards.length === 2) {
                 if (matchingCards[0] === matchingCards[1]) {
-                    console.log('Win!');
+                    cardsMatch = true;
+                    console.log('Match!');
+                    if (cardsMatch === true) {
+                        matchingCards.length = 0;
+                    }
                 } else {
+                    console.log('No match!');
                     matchingCards.length = 0;
                 }
             } 
@@ -82,8 +87,8 @@ function restart() {
 }
 
 function init() {
-    gameWon();
     createCards();
+    gameWon();
 }
 
 init();

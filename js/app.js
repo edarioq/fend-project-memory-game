@@ -14,8 +14,7 @@ var icons = [
 ];
 
 var matchedCardsList = new Array();
-
-
+var gg = false;
 
 function createIconSet(iconsArray) {
     var iconSet = new Array();
@@ -27,6 +26,10 @@ function createIconSet(iconsArray) {
     return iconSet;
 }
 
+
+/*
+ * Board functionality
+ */
 function shuffle(arr) {
     for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
     return arr;
@@ -55,7 +58,7 @@ function checkIfCardsMatched() {
     for (var i = 0; i < cards.length; i++) {
         
         cards[i].addEventListener('click', function() {
-            
+
             matchingCards.push(this.children[0].className);
             wrongCards.push(this);
             this.classList.add('open', 'show');
@@ -63,7 +66,6 @@ function checkIfCardsMatched() {
             if (matchingCards.length === 2) {
                 if (matchingCards[0] === matchingCards[1]) {
                     cardsMatch = true;
-                    console.log('Match!');
 
                     if (cardsMatch) {
                         matchedCardsList.push(matchingCards[0]);
@@ -74,8 +76,8 @@ function checkIfCardsMatched() {
 
                 } else {
                     cardsMatch = false;
-                    console.log('No match!');
                     matchingCards.length = 0;
+
                     setTimeout(function() {
                         wrongCards[0].classList.remove('open', 'show');
                         wrongCards[1].classList.remove('open', 'show');
@@ -90,34 +92,39 @@ function checkIfCardsMatched() {
     }
 }
 
+
+/*
+ * Core functionality
+ */
+
 function checkIfGameIsWon() {
     var allCards = icons.length * 2;
     if (matchedCardsList.length === allCards) {
-        console.log('GAME OVER!');
+        gg = true;
         gameOver();
+        console.log('GAME OVER!');
     }
 }
 
 function gameOver() {
-    var body = document.getElementsByTagName('body');
-    var gameWon = document.getElementsByClassName('game-won');
-    body[0].classList.add('overlay');
-    gameWon[0].classList.remove('hidden');
+    if (gg === true) {
+        document.getElementsByTagName('body')[0].classList.add('overlay');
+        document.getElementsByClassName('game-won')[0].classList.remove('hidden');
+    } else {
+        document.getElementsByTagName('body')[0].classList.remove('overlay');
+        document.getElementsByClassName('game-won')[0].classList.add('hidden');
+    }
+    
 }
 
-function reset() {
-    var cards = document.getElementById('cards');var body = document.getElementsByTagName('body');
-    var gameWon = document.getElementsByClassName('game-won');
-    body[0].classList.remove('overlay');
-    gameWon[0].classList.add('hidden');
-    cards.innerHTML = '';
-    createCards();
-}
 
+/*
+ * Go!
+ */
 function init() {
+    document.getElementById('cards').innerHTML = '';
     createCards();
     checkIfCardsMatched();
-    checkIfGameIsWon();
 }
 
 init();

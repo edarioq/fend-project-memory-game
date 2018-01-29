@@ -1,5 +1,5 @@
 /*
- * Data
+ * Globals
  */
 
 var icons = [
@@ -13,6 +13,10 @@ var icons = [
     '<i class="fa fa-linux" aria-hidden="true"></i>'     
 ];
 
+var matchedCardsList = new Array();
+
+
+
 function createIconSet(iconsArray) {
     var iconSet = new Array();
 
@@ -22,15 +26,6 @@ function createIconSet(iconsArray) {
     }
     return iconSet;
 }
-
-
-
-
-
-/* 
- * Shuffle cards thanks to:
- * //stackoverflow.com/questions/20031629/how-to-shuffle-array-without-duplicate-elements-using-jquery
- */
 
 function shuffle(arr) {
     for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
@@ -46,26 +41,12 @@ function createCards() {
         var list = document.createElement('li');
         list.classList.add('card');
         list.innerHTML = shuffledIcons[i];
+        list.classList.add('show'); // Remove
         cards.appendChild(list);
     }
 }
 
-
-
-
-
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
-
-function gameWon() {
+function checkIfCardsMatched() {
     var cards = document.getElementsByClassName('card');
     var matchingCards = new Array();
     var wrongCards = new Array();
@@ -74,20 +55,23 @@ function gameWon() {
     for (var i = 0; i < cards.length; i++) {
         
         cards[i].addEventListener('click', function() {
-
-            matchingCards.push(this.children[0].className);
-            this.classList.add('open', 'show');
             
+            matchingCards.push(this.children[0].className);
             wrongCards.push(this);
-            console.log(wrongCards);
+            this.classList.add('open', 'show');
+
             if (matchingCards.length === 2) {
                 if (matchingCards[0] === matchingCards[1]) {
                     cardsMatch = true;
                     console.log('Match!');
-                    if (cardsMatch === true) {
+
+                    if (cardsMatch) {
+                        matchedCardsList.push(matchingCards[0]);
+                        matchedCardsList.push(matchingCards[1]);
                         matchingCards.length = 0;
                         wrongCards.length = 0;
                     }
+
                 } else {
                     cardsMatch = false;
                     console.log('No match!');
@@ -100,19 +84,40 @@ function gameWon() {
                     
                 }
             } 
-
+            checkIfGameIsWon();
         });
         
     }
 }
 
-function restart() {
+function checkIfGameIsWon() {
+    var allCards = icons.length * 2;
+    if (matchedCardsList.length === allCards) {
+        console.log('GAME OVER!');
+        gameOver();
+    }
+}
 
+function gameOver() {
+    var body = document.getElementsByTagName('body');
+    var gameWon = document.getElementsByClassName('game-won');
+    body[0].classList.add('overlay');
+    gameWon[0].classList.remove('hidden');
+}
+
+function reset() {
+    var cards = document.getElementById('cards');var body = document.getElementsByTagName('body');
+    var gameWon = document.getElementsByClassName('game-won');
+    body[0].classList.remove('overlay');
+    gameWon[0].classList.add('hidden');
+    cards.innerHTML = '';
+    createCards();
 }
 
 function init() {
     createCards();
-    gameWon();
+    checkIfCardsMatched();
+    checkIfGameIsWon();
 }
 
 init();

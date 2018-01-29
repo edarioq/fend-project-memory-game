@@ -22,17 +22,21 @@
         		<li><i class="fa fa-star"></i></li>
         	</ul>
 
-        	<span class="moves">3</span> Moves
-
-            <div class="restart">
+            <div class="restart" onclick="reset()">
         		<i class="fa fa-repeat"></i>
         	</div>
         </section>
 
-        <!-- <li class="card"></li> -->
         <ul id="cards" class="deck"></ul>
+
     </div>
 
+    <div class="game-won hidden">
+        <div class="game-won-bg">
+            <h1>Congratulations!</h1>
+            <button class="btn" onclick="reset()">Play Again?</button>
+        </div>
+    </div>
     <script src="js/app.js"></script>
 </body>
 </html>

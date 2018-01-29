@@ -44,7 +44,7 @@ function createCards() {
         var list = document.createElement('li');
         list.classList.add('card');
         list.innerHTML = shuffledIcons[i];
-        list.classList.add('show'); // Remove
+        /* list.classList.add('show'); // Remove */
         cards.appendChild(list);
     }
 }
@@ -82,7 +82,7 @@ function checkIfCardsMatched() {
                         wrongCards[0].classList.remove('open', 'show');
                         wrongCards[1].classList.remove('open', 'show');
                         wrongCards.length = 0;
-                    }, 500);
+                    }, 400);
                     
                 }
             } 
@@ -107,12 +107,14 @@ function checkIfGameIsWon() {
 }
 
 function gameOver() {
+    var body = document.getElementsByTagName('body')[0];
+    var gameWonModal = document.getElementsByClassName('game-won')[0];
     if (gg === true) {
-        document.getElementsByTagName('body')[0].classList.add('overlay');
-        document.getElementsByClassName('game-won')[0].classList.remove('hidden');
+        body.classList.add('overlay');
+        gameWonModal.classList.remove('hidden');
     } else {
-        document.getElementsByTagName('body')[0].classList.remove('overlay');
-        document.getElementsByClassName('game-won')[0].classList.add('hidden');
+        body.classList.remove('overlay');
+        gameWonModal.classList.add('hidden');
     }
     
 }
@@ -122,7 +124,9 @@ function gameOver() {
  * Go!
  */
 function init() {
+    gg = false;
     document.getElementById('cards').innerHTML = '';
+    gameOver();
     createCards();
     checkIfCardsMatched();
 }

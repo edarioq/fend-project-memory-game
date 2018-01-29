@@ -82,7 +82,7 @@ function checkIfCardsMatched() {
                         wrongCards[0].classList.remove('open', 'show');
                         wrongCards[1].classList.remove('open', 'show');
                         wrongCards.length = 0;
-                    }, 400);
+                    }, 500);
                     
                 }
             } 

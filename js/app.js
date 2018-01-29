@@ -68,23 +68,39 @@ function createCards() {
 function gameWon() {
     var cards = document.getElementsByClassName('card');
     var matchingCards = new Array();
+    var wrongCards = new Array();
     var cardsMatch = false;
+
     for (var i = 0; i < cards.length; i++) {
+        
         cards[i].addEventListener('click', function() {
+
             matchingCards.push(this.children[0].className);
             this.classList.add('open', 'show');
+            
+            wrongCards.push(this);
+            console.log(wrongCards);
             if (matchingCards.length === 2) {
                 if (matchingCards[0] === matchingCards[1]) {
                     cardsMatch = true;
                     console.log('Match!');
                     if (cardsMatch === true) {
                         matchingCards.length = 0;
+                        wrongCards.length = 0;
                     }
                 } else {
+                    cardsMatch = false;
                     console.log('No match!');
                     matchingCards.length = 0;
+                    setTimeout(function() {
+                        wrongCards[0].classList.remove('open', 'show');
+                        wrongCards[1].classList.remove('open', 'show');
+                        wrongCards.length = 0;
+                    }, 500);
+                    
                 }
             } 
+
         });
         
     }

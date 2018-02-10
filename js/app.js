@@ -10,7 +10,7 @@ var icons = [
     '<i class="fa fa-whatsapp" aria-hidden="true"></i>',
     '<i class="fa fa-google" aria-hidden="true"></i>',
     '<i class="fa fa-apple" aria-hidden="true"></i>',
-    '<i class="fa fa-linux" aria-hidden="true"></i>'     
+    '<i class="fa fa-linux" aria-hidden="true"></i>'
 ];
 
 var matchedCardsList = new Array();
@@ -37,61 +37,96 @@ function shuffle(arr) {
 
 function createCards() {
     var cards = document.getElementById('cards');
-    var iconSet = createIconSet(icons);    
+    var iconSet = createIconSet(icons);
     var shuffledIcons = shuffle(iconSet);
 
-    for (var i = 0; i < shuffledIcons.length; i++) {  
+    for (var i = 0; i < shuffledIcons.length; i++) {
         var list = document.createElement('li');
         list.classList.add('card');
         list.innerHTML = shuffledIcons[i];
-        /* list.classList.add('show'); // Remove */
+        // Uncomment for debugging purposes
+        list.classList.add('show');
         cards.appendChild(list);
     }
+    gameTimer();
 }
 
 function checkIfCardsMatched() {
     var cards = document.getElementsByClassName('card');
-    var matchingCards = new Array();
-    var wrongCards = new Array();
-    var cardsMatch = false;
+    var savedFlippedCards = new Array();
+    var resetFlippedCards = new Array();
+    var matchedCards = new Array();
+    var cardsDidMatch = false;
 
     for (var i = 0; i < cards.length; i++) {
-        
-        cards[i].addEventListener('click', function() {
 
-            matchingCards.push(this.children[0].className);
-            wrongCards.push(this);
+        cards[i].addEventListener('click', function () {     
+            
             this.classList.add('open', 'show');
+            
+            matchedCards.push(this);
+            savedFlippedCards.push(this.children[0].className);
+            resetFlippedCards.push(this);
 
-            if (matchingCards.length === 2) {
-                if (matchingCards[0] === matchingCards[1]) {
-                    cardsMatch = true;
+            if (savedFlippedCards.length === 2) {
 
-                    if (cardsMatch) {
-                        matchedCardsList.push(matchingCards[0]);
-                        matchedCardsList.push(matchingCards[1]);
-                        matchingCards.length = 0;
-                        wrongCards.length = 0;
+                if (savedFlippedCards[0] === savedFlippedCards[1]) {
+                    cardsDidMatch = true;
+                    
+                    setTimeout(function() {
+                        matchedCards[0].classList.add('match');
+                        matchedCards[1].classList.add('match');
+                    }, 300);
+
+                    if (cardsDidMatch) {
+                        matchedCardsList.push(savedFlippedCards[0]);
+                        matchedCardsList.push(savedFlippedCards[1]);
+                        setTimeout(function() {
+                            savedFlippedCards.length = 0;
+                            resetFlippedCards.length = 0;
+                            matchedCards.length = 0;
+                        }, 500);
+                        
                     }
 
                 } else {
-                    cardsMatch = false;
-                    matchingCards.length = 0;
+                    cardsDidMatch = false;
+                    savedFlippedCards.length = 0;
 
-                    setTimeout(function() {
-                        wrongCards[0].classList.remove('open', 'show');
-                        wrongCards[1].classList.remove('open', 'show');
-                        wrongCards.length = 0;
-                    }, 500);
-                    
+                    setTimeout(function () {
+                        resetFlippedCards[0].classList.remove('open', 'show');
+                        resetFlippedCards[1].classList.remove('open', 'show');
+                        resetFlippedCards.length = 0;
+                    }, 1000);
+
                 }
-            } 
+
+/*                 for (var j = 0; j < cards.length; j++) {
+                    if (!cards[j].classList.contains('open', 'show')) {
+                        cards[j].classList.add('disabled');
+                    }
+                } */
+
+            } else {
+
+            }
             checkIfGameIsWon();
         });
-        
+
     }
 }
 
+
+function disableCards() {
+    var cards = document.getElementsByClassName('card');
+    console.log('disableCards: ', cards);
+    
+    for (var i = 0; i < cards.length; i++) {
+        if (!cards[i].classList.contains('open', 'show')) {
+            cards[i].classList.add('');
+        }
+    }
+}
 
 /*
  * Core functionality
@@ -116,9 +151,31 @@ function gameOver() {
         body.classList.remove('overlay');
         gameWonModal.classList.add('hidden');
     }
-    
+
 }
 
+function gameTimer() {
+    var totalSeconds = 0;
+    var mins = document.getElementById("minutes");
+    var secs = document.getElementById("seconds");
+
+    function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+    }
+
+    function setTime() {
+        totalSeconds++;
+        secs.innerHTML = pad(totalSeconds % 60);
+        mins.innerHTML = pad(parseInt(totalSeconds / 60));
+    }
+
+    setInterval(setTime, 1000);
+}
 
 /*
  * Go!
